@@ -6,26 +6,23 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/IBM/sarama"
-	"github.com/MikhailKK/appkafka/consumer"
-	"github.com/MikhailKK/appkafka/producer"
+	"github.com/MikhailKK/appkafka/adaptors/kafka"
+	"github.com/MikhailKK/appkafka/app"
 )
 
 func main() {
 	// Создаем конфигурацию Kafka
-	config := sarama.NewConfig()
-	config.Producer.Return.Successes = true
+	config := kafka.NewKafkaConfig()
 
 	// Адрес брокера Kafka
 	brokers := []string{"localhost:9092"}
 
 	// Запускаем производителя
-	go producer.StartProducer(brokers, config)
+	go app.StartProducer(brokers, config)
 
 	// Запускаем потребителя для первой партиции
 	go func() {
-		cons := consumer.Consumer{}
-		cons.StartConsumer(brokers, "test", 0)
+		app.StartConsumer(brokers, "test", 0)
 	}()
 
 	// Захват сигнала для корректного завершения работы

@@ -1,23 +1,14 @@
-package consumer
+package kafka
 
 import (
 	"encoding/json"
 	"log"
 
 	"github.com/IBM/sarama"
+	"github.com/MikhailKK/appkafka/domain"
 )
 
-type Message struct {
-	ID     int    `json:"id"`
-	Type   string `json:"type"`
-	Amount int    `json:"amount"`
-}
-
-type Consumer struct {
-	Partition int32
-}
-
-func (consumer *Consumer) StartConsumer(brokers []string, topic string, partition int32) {
+func StartConsumer(brokers []string, topic string, partition int32) sarama.PartitionConsumer {
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 
@@ -25,22 +16,19 @@ func (consumer *Consumer) StartConsumer(brokers []string, topic string, partitio
 	if err != nil {
 		log.Fatalf("Failed to start consumer: %s", err)
 	}
-	defer master.Close()
 
-	consumer.Partition = partition
-
-	// Создаем consumer для определенной партиции
 	partitionConsumer, err := master.ConsumePartition(topic, partition, sarama.OffsetNewest)
 	if err != nil {
 		log.Fatalf("Failed to start partition consumer: %s", err)
 	}
-	defer partitionConsumer.Close()
+	return partitionConsumer
+}
 
-	// Обрабатываем сообщения
+func ConsumeMessages(consumer sarama.PartitionConsumer) {
 	for {
 		select {
-		case msg := <-partitionConsumer.Messages():
-			var receivedMsg Message
+		case msg := <-consumer.Messages():
+			var receivedMsg domain.Message
 			err := json.Unmarshal(msg.Value, &receivedMsg)
 			if err != nil {
 				log.Printf("Failed to unmarshal message: %s", err)
@@ -49,7 +37,7 @@ func (consumer *Consumer) StartConsumer(brokers []string, topic string, partitio
 
 			log.Printf("Message claimed: id = %d, type = %s, amount = %d, offset = %d, timestamp = %v, topic = %s, partition = %d",
 				receivedMsg.ID, receivedMsg.Type, receivedMsg.Amount, msg.Offset, msg.Timestamp, msg.Topic, msg.Partition)
-		case err := <-partitionConsumer.Errors():
+		case err := <-consumer.Errors():
 			log.Printf("Error: %s", err)
 		}
 	}
