@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -19,6 +20,7 @@ func main() {
 
 	// Запускаем производителя
 	go app.StartProducer(brokers, config)
+	fmt.Println("Connection success")
 
 	// Запускаем потребителя для первой партиции
 	go func() {
