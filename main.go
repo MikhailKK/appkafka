@@ -31,7 +31,7 @@ func main() {
 		for {
 			msg := &sarama.ProducerMessage{
 				Topic: "test",
-				Value: sarama.StringEncoder("Hello Kafka!"),
+				Value: sarama.StringEncoder("message 1"),
 			}
 
 			partition, offset, err := producer.SendMessage(msg)
