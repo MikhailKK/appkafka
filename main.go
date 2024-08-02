@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/MikhailKK/appkafka/adaptors/kafka"
 	"github.com/MikhailKK/appkafka/app"
+	"github.com/MikhailKK/appkafka/port/http"
 )
 
 func main() {
@@ -20,12 +20,14 @@ func main() {
 
 	// Запускаем производителя
 	go app.StartProducer(brokers, config)
-	fmt.Println("Connection success")
 
 	// Запускаем потребителя для первой партиции
 	go func() {
 		app.StartConsumer(brokers, "test", 0)
 	}()
+
+	// Запускаем HTTP сервер
+	go http.StartHTTPServer()
 
 	// Захват сигнала для корректного завершения работы
 	sigterm := make(chan os.Signal, 1)

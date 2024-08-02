@@ -24,7 +24,7 @@ func StartConsumer(brokers []string, topic string, partition int32) sarama.Parti
 	return partitionConsumer
 }
 
-func ConsumeMessages(consumer sarama.PartitionConsumer) {
+func ConsumeMessages(consumer sarama.PartitionConsumer, callback func(domain.Message)) {
 	for {
 		select {
 		case msg := <-consumer.Messages():
@@ -37,6 +37,9 @@ func ConsumeMessages(consumer sarama.PartitionConsumer) {
 
 			log.Printf("Message claimed: id = %d, type = %s, amount = %d, offset = %d, timestamp = %v, topic = %s, partition = %d",
 				receivedMsg.ID, receivedMsg.Type, receivedMsg.Amount, msg.Offset, msg.Timestamp, msg.Topic, msg.Partition)
+
+			callback(receivedMsg)
+
 		case err := <-consumer.Errors():
 			log.Printf("Error: %s", err)
 		}
