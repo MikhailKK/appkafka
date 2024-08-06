@@ -18,12 +18,18 @@ func main() {
 	// Адрес брокера Kafka
 	brokers := []string{"localhost:9092"}
 
-	// Запускаем производителя для первого топика test
+	// Подключение к базе данных
+	dbConnStr := "postgres://postgres:admin@localhost:5432/openmind?sslmode=disable"
+
+	app.InitDB(dbConnStr)
+
+	// Запускаем производителя для топика "test"
 	go app.StartProducer(brokers, config)
 
+	// Запускаем производителя для топика "refund"
 	go app.StartRefundProducer(brokers, config)
 
-	// Запускаем потребителя для первой партиции
+	// Запускаем потребителя для первой партиции топика "test"
 	go func() {
 		app.StartConsumer(brokers, "test", 0)
 	}()

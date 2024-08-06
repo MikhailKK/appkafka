@@ -16,13 +16,13 @@ func StartProducer(brokers []string, config *sarama.Config) {
 	id := 1
 	for {
 		msg := domain.Message{
-			ID:     id,
-			Type:   "bet",
-			Amount: 20,
-			Key:    "key-" + strconv.Itoa(id%2), // Простое распределение ключей
+			KafkaID: id,
+			Type:    "bet",
+			Amount:  20,
+			Key:     "key-" + strconv.Itoa(id%2), // Простое распределение ключей
 		}
 		kafka.ProduceMessage(producer, msg)
 		id++
-		time.Sleep(10 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 }

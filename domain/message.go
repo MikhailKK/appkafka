@@ -1,14 +1,18 @@
 package domain
 
+import "gorm.io/gorm"
+
 // Message represents the structure of the message to be sent and received.
 type Message struct {
-	ID     int    `json:"id"`
-	Type   string `json:"type"`
-	Amount int    `json:"amount"`
-	Key    string `json:"key"`
+	gorm.Model
+	KafkaID int    `gorm:"index"`
+	Type    string `gorm:"type:varchar(200)"`
+	Amount  int
+	Key     string `gorm:"type:varchar(50)"`
 }
 
 type RefundMessage struct {
-	ID     int `json:"id"`
-	Reason int `json:"reson"`
+	gorm.Model
+	KafkaID int `gorm:"index"`
+	Reason  int
 }

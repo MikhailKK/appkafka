@@ -15,8 +15,8 @@ func StartRefundProducer(brokers []string, config *sarama.Config) {
 	id := 1
 	for {
 		msg := domain.RefundMessage{
-			ID:     id,
-			Reason: 1,
+			KafkaID: id,
+			Reason:  1,
 		}
 		kafka.ProduceRefundMessage(producer, msg)
 		id++
