@@ -23,6 +23,6 @@ func StartProducer(brokers []string, config *sarama.Config) {
 		}
 		kafka.ProduceMessage(producer, msg)
 		id++
-		time.Sleep(2 * time.Second)
+		time.Sleep(20 * time.Second)
 	}
 }

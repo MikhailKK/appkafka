@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/MikhailKK/appkafka/config"
 	"github.com/MikhailKK/appkafka/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,9 +11,9 @@ import (
 
 var db *gorm.DB
 
-func InitDB(connStr string) {
+func InitDB(config *config.Config) {
 	var err error
-	db, err = gorm.Open(postgres.Open(connStr), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(config.GetDBConnectionString()), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}

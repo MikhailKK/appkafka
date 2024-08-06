@@ -20,6 +20,6 @@ func StartRefundProducer(brokers []string, config *sarama.Config) {
 		}
 		kafka.ProduceRefundMessage(producer, msg)
 		id++
-		time.Sleep(2 * time.Second)
+		time.Sleep(8 * time.Second)
 	}
 }

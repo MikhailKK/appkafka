@@ -8,26 +8,31 @@ import (
 
 	"github.com/MikhailKK/appkafka/adaptors/kafka"
 	"github.com/MikhailKK/appkafka/app"
+	"github.com/MikhailKK/appkafka/config"
 	"github.com/MikhailKK/appkafka/port/http"
 )
 
 func main() {
+	// Загружаем конфигурацию
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
 	// Создаем конфигурацию Kafka
-	config := kafka.NewKafkaConfig()
+	kafkaConfig := kafka.NewKafkaConfig()
 
 	// Адрес брокера Kafka
 	brokers := []string{"localhost:9092"}
 
 	// Подключение к базе данных
-	dbConnStr := "postgres://postgres:admin@localhost:5432/openmind?sslmode=disable"
-
-	app.InitDB(dbConnStr)
+	app.InitDB(cfg)
 
 	// Запускаем производителя для топика "test"
-	go app.StartProducer(brokers, config)
+	go app.StartProducer(brokers, kafkaConfig)
 
 	// Запускаем производителя для топика "refund"
-	go app.StartRefundProducer(brokers, config)
+	go app.StartRefundProducer(brokers, kafkaConfig)
 
 	// Запускаем потребителя для первой партиции топика "test"
 	go func() {
