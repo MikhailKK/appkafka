@@ -18,8 +18,10 @@ func main() {
 	// Адрес брокера Kafka
 	brokers := []string{"localhost:9092"}
 
-	// Запускаем производителя
+	// Запускаем производителя для первого топика test
 	go app.StartProducer(brokers, config)
+
+	go app.StartRefundProducer(brokers, config)
 
 	// Запускаем потребителя для первой партиции
 	go func() {

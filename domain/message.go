@@ -7,3 +7,8 @@ type Message struct {
 	Amount int    `json:"amount"`
 	Key    string `json:"key"`
 }
+
+type RefundMessage struct {
+	ID     int `json:"id"`
+	Reason int `json:"reson"`
+}
